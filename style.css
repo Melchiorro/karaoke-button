@@ -200,3 +200,10 @@ div#history {
 }
 
 #resultTable th, #resultTable td {padding: 20px 10px;}
+
+#resultTable input[type="button"] {
+    padding: 5px;
+    border: 1px solid #350f0f;
+    background: #732b2b;
+    color: #fff;
+}
