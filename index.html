@@ -1,1 +1,89 @@
-<h1>Hello</h1>
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="utf-8">
+    <title>Караоке кнопка</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <nav>
+        <ul class="nav">
+            <li>
+                <a id="add" href="#" onclick="addCounter()">
+                </a>
+            </li>
+            <li>
+                <a id="undo" href="#" onclick="undoCounter()"></a>
+            </li>
+        </ul>
+    </nav>
+    <div id="counter">0</div>
+    <div id="currentSong"><input type="text" id="artist" placeholder="Кто поет?" /><input type="text" id="song"
+            placeholder="Что поет?" /></div>
+    <input type="button" value="Сохранить результат и отчистить поля" id="saveResult" onclick="saveResult()" />
+    <div id="history">
+        <table id="resultTable">
+            <thead>
+                <th class="artist">Исполнил</th>
+                <th class="song">Песня</th>
+                <th class="score">Очки</th>
+                <th class="delete"></th>
+            </thead>
+            <tbody>
+
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        function addCounter() {
+            let countElem = document.getElementById(`counter`);
+            countElem.innerHTML = +countElem.innerHTML + 1;
+        }
+
+        function undoCounter() {
+            let countElem = document.getElementById(`counter`);
+            let res = countElem.innerHTML - 1;
+            countElem.innerHTML = (res > 0) ? res : 0;
+        }
+
+        function saveResult() {
+            let countElem = document.getElementById(`counter`);
+            let artist = document.getElementById(`artist`);
+            let song = document.getElementById(`song`);
+            let tbodyRef = document.getElementById(`resultTable`).getElementsByTagName('tbody')[0];
+            let newRow = tbodyRef.insertRow();
+            newRow.innerHTML =
+                `<td>${artist.value}</td><td>${song.value}</td><td>${countElem.innerHTML}</td><td><input type="button" value="удалить" onclick="SomeDeleteRowFunction(this)"></td>`;
+                countElem.innerHTML = 0;
+                artist.value = ``;
+                song.value = ``;
+                
+        }
+
+        function SomeDeleteRowFunction(elem) {
+            var td = event.target.parentNode;
+            var tr = td.parentNode;
+            tr.parentNode.removeChild(tr);
+        }
+
+        const getCellValue = (tr, idx) => tr.children[idx].innerText || tr.children[idx].textContent;
+
+        const comparer = (idx, asc) => (a, b) => ((v1, v2) =>
+            v1 !== '' && v2 !== '' && !isNaN(v1) && !isNaN(v2) ? v1 - v2 : v1.toString().localeCompare(v2)
+        )(getCellValue(asc ? a : b, idx), getCellValue(asc ? b : a, idx));
+
+        // do the work...
+        document.querySelectorAll('th').forEach(th => th.addEventListener('click', (() => {
+            const table = th.closest('table');
+            const tbody = table.querySelector('tbody');
+            Array.from(tbody.querySelectorAll('tr'))
+                .sort(comparer(Array.from(th.parentNode.children).indexOf(th), this.asc = !this.asc))
+                .forEach(tr => tbody.appendChild(tr));
+        })));
+    </script>
+</body>
+
+</html>
