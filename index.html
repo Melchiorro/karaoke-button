@@ -40,6 +40,8 @@
 
     <script>
         function addCounter() {
+            let audio = new Audio('the-voicechair-choice-button-sound-effect.mp3');
+            audio.play();
             let countElem = document.getElementById(`counter`);
             countElem.innerHTML = +countElem.innerHTML + 1;
         }
