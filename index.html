@@ -21,8 +21,10 @@
         </ul>
     </nav>
     <div id="counter">0</div>
-    <div id="currentSong"><input type="text" id="artist" placeholder="Кто поет?" /><input type="text" id="song"
-            placeholder="Что поет?" /></div>
+    <div id="currentSong">
+        <input type="text" id="artist" placeholder="Кто поет?" />
+        <input type="text" id="song" placeholder="Что поет?" />
+    </div>
     <input type="button" value="Сохранить результат и очистить поля" id="saveResult" onclick="saveResult()" />
     
     <div id="history">
@@ -39,9 +41,24 @@
         </table>
     </div>
 	
-	<input type="button" value="Очистить таблицу" id="clearTable" onclick="clearTable()" />
+    <input type="button" value="Очистить таблицу" id="clearTable" onclick="clearTable()" />
+
+    <!-- Итоговая статистика -->
+    <div id="statistics">
+        <h3>Итоговая статистика</h3>
+        <table id="statisticsTable">
+            <thead>
+                <th>Исполнитель</th>
+                <th>Общие очки</th>
+            </thead>
+            <tbody>
+            </tbody>
+        </table>
+    </div>
 
     <script>
+        let artistScores = {}; // Объект для хранения сумм очков по каждому исполнителю
+
         function addCounter() {
             let audio = new Audio('the-voicechair-choice-button-sound-effect.mp3');
             audio.play();
@@ -63,21 +80,59 @@
             let newRow = tbodyRef.insertRow();
             newRow.innerHTML =
                 `<td>${artist.value}</td><td>${song.value}</td><td>${countElem.innerHTML}</td><td><input type="button" value="удалить" onclick="SomeDeleteRowFunction(this)"></td>`;
-                countElem.innerHTML = 0;
-                artist.value = ``;
-                song.value = ``;
-                
+
+            // Обновляем статистику
+            updateStatistics(artist.value, parseInt(countElem.innerHTML));
+
+            // Обнуляем все поля
+            countElem.innerHTML = 0;
+            artist.value = ``;
+            song.value = ``;
         }
 
         function SomeDeleteRowFunction(elem) {
             var td = event.target.parentNode;
             var tr = td.parentNode;
+            let artist = tr.cells[0].innerText; // Получаем имя исполнителя
+            let score = parseInt(tr.cells[2].innerText); // Получаем количество очков
+
+            // Удаляем строку из таблицы
             tr.parentNode.removeChild(tr);
+
+            // Обновляем статистику
+            updateStatistics(artist, -score); // Уменьшаем очки исполнителя
+        }
+
+        // Функция для обновления статистики
+        function updateStatistics(artist, score) {
+            if (!artistScores[artist]) {
+                artistScores[artist] = 0;
+            }
+
+            artistScores[artist] += score;
+
+            let statsTableBody = document.getElementById("statisticsTable").getElementsByTagName('tbody')[0];
+
+            // Проверяем, есть ли уже такая строка в таблице статистики
+            let row = Array.from(statsTableBody.rows).find(row => row.cells[0].innerText === artist);
+
+            if (row) {
+                // Обновляем существующую строку
+                row.cells[1].innerText = artistScores[artist];
+            } else {
+                // Добавляем новую строку, если исполнителя нет в статистике
+                let newRow = statsTableBody.insertRow();
+                newRow.innerHTML = `<td>${artist}</td><td>${artistScores[artist]}</td>`;
+            }
         }
 
         function clearTable() {
             let tbody = document.getElementById('resultTable').getElementsByTagName('tbody')[0];
             tbody.innerHTML = '';
+            // Очищаем статистику
+            let statsTableBody = document.getElementById("statisticsTable").getElementsByTagName('tbody')[0];
+            statsTableBody.innerHTML = '';
+            artistScores = {}; // Обнуляем объект статистики
         }
 
         const getCellValue = (tr, idx) => tr.children[idx].innerText || tr.children[idx].textContent;
