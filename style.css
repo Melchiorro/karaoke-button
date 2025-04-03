@@ -207,3 +207,18 @@ div#history {
     background: #732b2b;
     color: #fff;
 }
+
+#clearTable {
+  padding: 10px;
+  width: 94%;
+  font-size: 17px;
+  color: #fff;
+  background: #3b2828;
+  border: 1px solid #573535;
+  cursor: pointer;
+}
+
+#clearTable:hover {
+	background: #6c4646;
+}
+
