@@ -24,6 +24,7 @@
     <div id="currentSong"><input type="text" id="artist" placeholder="Кто поет?" /><input type="text" id="song"
             placeholder="Что поет?" /></div>
     <input type="button" value="Сохранить результат и очистить поля" id="saveResult" onclick="saveResult()" />
+    
     <div id="history">
         <table id="resultTable">
             <thead>
@@ -37,6 +38,8 @@
             </tbody>
         </table>
     </div>
+	
+	<input type="button" value="Очистить таблицу" id="clearTable" onclick="clearTable()" />
 
     <script>
         function addCounter() {
@@ -70,6 +73,11 @@
             var td = event.target.parentNode;
             var tr = td.parentNode;
             tr.parentNode.removeChild(tr);
+        }
+
+        function clearTable() {
+            let tbody = document.getElementById('resultTable').getElementsByTagName('tbody')[0];
+            tbody.innerHTML = '';
         }
 
         const getCellValue = (tr, idx) => tr.children[idx].innerText || tr.children[idx].textContent;
